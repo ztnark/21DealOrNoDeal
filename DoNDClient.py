@@ -3,22 +3,22 @@ import json
 import os
 import requests
 
-# #import from the 21 Developer Library
-# from two1.commands.config import Config
-# from two1.lib.wallet import Wallet
-# from two1.lib.bitrequests import BitTransferRequests
+#import from the 21 Developer Library
+from two1.commands.config import Config
+from two1.lib.wallet import Wallet
+from two1.lib.bitrequests import BitTransferRequests
 
 # set up bitrequest client for BitTransfer requests
-# wallet = Wallet()
-# username = Config().username
-# requests = BitTransferRequests(wallet, username)
+wallet = Wallet()
+username = Config().username
+requests = BitTransferRequests(wallet, username)
 
 # server address
 def play(server_url = 'http://localhost:9393/'):
          
     # get the file listing from the server
     print("Welcome to DEAL or NO DEAL!");
-    response = requests.get(url=server_url+'play')
+    response = requests.get(url=server_url+'play?username=' + username)
     # print(json.loads(response.text)["cases"])
     case_list = json.loads(response.text)["cases"]
     prizes = []
@@ -37,6 +37,7 @@ def play(server_url = 'http://localhost:9393/'):
             print("Offer from the banker: " + str(sum(prizes) /len(prizes)))
             deal = input("Deal OR No Deal? ")
             if deal == "Deal":
+                response = requests.get(url=server_url+'deal')
                 print("Congrats, you win " + str(sum(prizes) / len(prizes)) + " satoshi.")
                 return
             else:
@@ -59,6 +60,7 @@ def play(server_url = 'http://localhost:9393/'):
                 prizes.sort()
                 print("Prizes Remaining:")
                 print(prizes)
+        response = requests.get(url=server_url+'finalCase')
         print("Congrats, you win " + str(case_list[0]["value"]) + " satoshi.")
      #        if answer.status_code != 200:
      #        	print("Could not make an offchain payment. Please check that you have sufficient balance.")
